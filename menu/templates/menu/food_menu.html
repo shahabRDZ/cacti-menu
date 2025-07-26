@@ -138,7 +138,11 @@
 <div class="food-list">
     {% for food in foods %}
     <div class="food-card">
-        <img src="{{ food.image.url }}" alt="{{ food.title }}">
+        {% if food.image %}
+            <img src="{{ food.image.url }}" alt="{{ food.title }}">
+        {% else %}
+            <img src="{% static 'menu/images/default_food.png' %}" alt="بدون تصویر">
+        {% endif %}
         <div class="food-info">
             <div class="food-title">{{ food.title }}</div>
             <div class="food-category">{{ food.category.name }}</div>
