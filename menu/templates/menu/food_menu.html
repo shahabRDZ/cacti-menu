@@ -28,9 +28,16 @@
             display: flex;
             overflow-x: auto;
             padding: 0.5rem;
-            justify-content: center;
-            gap: 0.5rem;
             background-color: #222;
+            gap: 0.5rem;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .category-bar a {
+            flex: 0 0 auto;
+            text-decoration: none;
+            scroll-snap-align: start;
         }
 
         .category-bar button {
@@ -41,6 +48,7 @@
             padding: 0.5rem 1rem;
             cursor: pointer;
             white-space: nowrap;
+            font-size: 1rem;
         }
 
         .category-bar button.active {
@@ -124,11 +132,11 @@
         <button class="{% if not selected_category %}active{% endif %}">همه</button>
     </a>
     {% for category in categories %}
-    <a href="{% url 'food_by_category' category.name %}">
-        <button class="{% if selected_category == category.name %}active{% endif %}">
-            {{ category.name }}
-        </button>
-    </a>
+        <a href="{% url 'food_by_category' category.name %}">
+            <button class="{% if selected_category == category.name %}active{% endif %}">
+                {{ category.name }}
+            </button>
+        </a>
     {% endfor %}
 </div>
 
