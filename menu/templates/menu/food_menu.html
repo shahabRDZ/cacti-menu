@@ -2,79 +2,75 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منوی رستوران</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CACTI BURGER</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@32.105.0/font-face.css" />
     <link rel="manifest" href="{% static 'manifest.json' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@32.105.0/font-face.css">
-    <meta name="theme-color" content="#111" id="theme-color-meta">
+    <meta name="theme-color" content="#111" />
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register("{% static 'service-worker.js' %}");
+        }
+    </script>
     <style>
         :root {
-            --bg: #111;
-            --text: #f0f0f0;
-            --card: #1e1e1e;
-            --accent: #ff9800;
+            --bg-color: #111;
+            --text-color: #f0f0f0;
+            --card-color: #1e1e1e;
+            --highlight: #ff9800;
         }
 
         [data-theme="light"] {
-            --bg: #fff;
-            --text: #111;
-            --card: #f9f9f9;
-            --accent: #e65100;
+            --bg-color: #fff;
+            --text-color: #111;
+            --card-color: #f5f5f5;
+            --highlight: #ff9800;
         }
 
         body {
             margin: 0;
             font-family: "Vazirmatn", sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s;
         }
 
         header {
-            padding: 1rem;
             text-align: center;
-            background-color: var(--card);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 1rem;
+        }
+
+        .toggle-theme {
+            position: fixed;
+            left: 1rem;
+            top: 1rem;
+            background: var(--card-color);
+            border: none;
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
         h1 {
             margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .toggle-theme {
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .search-box {
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .search-box input {
-            padding: 0.6rem;
-            width: 80%;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
+            font-size: 1.8rem;
         }
 
         .category-bar {
             display: flex;
             overflow-x: auto;
             padding: 0.5rem;
+            background-color: var(--card-color);
             gap: 0.5rem;
-            background-color: var(--card);
+            scroll-snap-type: x mandatory;
         }
 
         .category-bar a {
             flex: 0 0 auto;
+            text-decoration: none;
+            scroll-snap-align: start;
         }
 
         .category-bar button {
@@ -88,23 +84,37 @@
         }
 
         .category-bar button.active {
-            background-color: var(--accent);
+            background-color: var(--highlight);
             color: #000;
         }
 
-        .food-list {
+        .search-bar {
+            text-align: center;
             padding: 1rem;
-            display: grid;
+        }
+
+        .search-bar input {
+            padding: 0.5rem;
+            border-radius: 10px;
+            border: none;
+            width: 80%;
+            font-size: 1rem;
+        }
+
+        .food-list {
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
+            padding: 1rem;
         }
 
         .food-card {
-            background-color: var(--card);
-            padding: 1rem;
+            background-color: var(--card-color);
             border-radius: 12px;
+            padding: 1rem;
             display: flex;
-            gap: 1rem;
             align-items: center;
+            gap: 1rem;
         }
 
         .food-card img {
@@ -115,22 +125,28 @@
         }
 
         .food-info {
-            flex: 1;
+            flex-grow: 1;
         }
 
         .food-title {
             font-size: 1.2rem;
-            margin-bottom: 0.3rem;
+            margin: 0 0 0.3rem;
         }
 
         .food-description {
-            color: #aaa;
+            font-size: 0.95rem;
+            color: #ccc;
+            margin: 0.3rem 0;
+        }
+
+        .food-category {
             font-size: 0.9rem;
+            color: #bbb;
         }
 
         .food-price {
             font-weight: bold;
-            color: var(--accent);
+            color: var(--highlight);
         }
 
         @media (max-width: 600px) {
@@ -143,25 +159,34 @@
                 width: 100%;
                 height: auto;
             }
+
+            .food-info {
+                width: 100%;
+            }
         }
     </style>
 </head>
-<body data-theme="dark">
+<body>
+
+<button class="toggle-theme" onclick="toggleTheme()">🌓</button>
 
 <header>
     <h1>CACTI BURGER</h1>
-    <button class="toggle-theme" onclick="toggleTheme()">🌓</button>
 </header>
 
-<div class="search-box">
-    <input type="text" id="searchInput" placeholder="جستجوی غذا...">
+<div class="search-bar">
+    <input type="text" placeholder="جستجوی غذا..." onkeyup="searchFoods(this.value)" />
 </div>
 
 <div class="category-bar">
-    <a href="{% url 'food_menu' %}"><button class="{% if not selected_category %}active{% endif %}">همه</button></a>
+    <a href="{% url 'food_menu' %}">
+        <button class="{% if not selected_category %}active{% endif %}">همه</button>
+    </a>
     {% for category in categories %}
         <a href="{% url 'food_by_category' category.name %}">
-            <button class="{% if selected_category == category.name %}active{% endif %}">{{ category.name }}</button>
+            <button class="{% if selected_category == category.name %}active{% endif %}">
+                {{ category.name }}
+            </button>
         </a>
     {% endfor %}
 </div>
@@ -169,7 +194,11 @@
 <div class="food-list" id="foodList">
     {% for food in foods %}
     <div class="food-card">
-        <img src="{{ food.image.url }}" alt="{{ food.title }}">
+        {% if food.image and food.image.name %}
+            <img src="{{ food.image.url }}" alt="{{ food.title }}">
+        {% else %}
+            <img src="{% static 'menu/images/default_food.png' %}" alt="بدون تصویر">
+        {% endif %}
         <div class="food-info">
             <div class="food-title">{{ food.title }}</div>
             <div class="food-description">{{ food.description }}</div>
@@ -181,24 +210,24 @@
 </div>
 
 <script>
-    // Theme toggle
     function toggleTheme() {
-        const body = document.body;
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        body.setAttribute('data-theme', newTheme);
-        document.querySelector('#theme-color-meta').setAttribute('content', newTheme === 'dark' ? '#111' : '#fff');
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
     }
 
-    // Search filter
-    document.getElementById('searchInput').addEventListener('input', function () {
-        const value = this.value.toLowerCase();
+    function searchFoods(query) {
+        query = query.toLowerCase();
         const cards = document.querySelectorAll('.food-card');
         cards.forEach(card => {
-            const text = card.innerText.toLowerCase();
-            card.style.display = text.includes(value) ? 'flex' : 'none';
+            const title = card.querySelector('.food-title').innerText.toLowerCase();
+            card.style.display = title.includes(query) ? 'flex' : 'none';
         });
-    });
+    }
 </script>
+
 </body>
 </html>
