@@ -19,12 +19,6 @@
             padding: 1rem;
         }
 
-        .logo {
-            width: 120px;
-            height: auto;
-            margin-bottom: 0.5rem;
-        }
-
         h1 {
             margin: 0;
             font-size: 1.8rem;
@@ -125,21 +119,19 @@
     <h1>CACTI BURGER</h1>
 </header>
 
-<!-- نوار دسته‌بندی -->
 <div class="category-bar">
     <a href="{% url 'food_menu' %}">
         <button class="{% if not selected_category %}active{% endif %}">همه</button>
     </a>
     {% for category in categories %}
-        <a href="{% url 'food_by_category' category.name %}">
-            <button class="{% if selected_category == category.name %}active{% endif %}">
-                {{ category.name }}
-            </button>
-        </a>
+    <a href="{% url 'food_by_category' category.name %}">
+        <button class="{% if selected_category == category.name %}active{% endif %}">
+            {{ category.name }}
+        </button>
+    </a>
     {% endfor %}
 </div>
 
-<!-- لیست غذاها -->
 <div class="food-list">
     {% for food in foods %}
     <div class="food-card">
