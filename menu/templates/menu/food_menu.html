@@ -33,7 +33,6 @@
             font-family: "Vazirmatn", sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            transition: background 0.3s, color 0.3s;
         }
 
         header {
@@ -48,7 +47,7 @@
             background: var(--card-color);
             border: none;
             color: var(--text-color);
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 1rem;
             border-radius: 8px;
             cursor: pointer;
         }
@@ -64,13 +63,17 @@
             padding: 0.5rem;
             background-color: var(--card-color);
             gap: 0.5rem;
-            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .category-bar::-webkit-scrollbar {
+            display: none;
         }
 
         .category-bar a {
             flex: 0 0 auto;
             text-decoration: none;
-            scroll-snap-align: start;
         }
 
         .category-bar button {
@@ -81,6 +84,7 @@
             padding: 0.5rem 1rem;
             cursor: pointer;
             white-space: nowrap;
+            font-size: 1rem;
         }
 
         .category-bar button.active {
@@ -196,6 +200,8 @@
     <div class="food-card">
         {% if food.image and food.image.url %}
             <img src="{{ food.image.url }}" alt="{{ food.title }}">
+        {% else %}
+            <img src="{% static 'menu/images/default_food.png' %}" alt="بدون تصویر">
         {% endif %}
         <div class="food-info">
             <div class="food-title">{{ food.title }}</div>
